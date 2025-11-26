@@ -1,7 +1,7 @@
 package com.roberlan.polaris.infrastructure.persistence.repository;
 
 import com.roberlan.polaris.core.domain.model.Task;
-import com.roberlan.polaris.presentation.controller.ports.out.TaskRepositoryPort;
+import com.roberlan.polaris.core.usecase.ports.out.TaskRepositoryPort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 

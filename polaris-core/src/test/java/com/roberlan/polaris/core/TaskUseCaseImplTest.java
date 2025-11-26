@@ -1,10 +1,10 @@
-package com.roberlan.polaris.presentation.controller.impl;
+package com.roberlan.polaris.core;
 
 import com.roberlan.polaris.core.domain.exception.ResourceNotFoundException;
 import com.roberlan.polaris.core.domain.model.Task;
 import com.roberlan.polaris.core.domain.model.TaskStatus;
 import com.roberlan.polaris.core.usecase.impl.TaskUseCaseImpl;
-import com.roberlan.polaris.presentation.controller.ports.out.TaskRepositoryPort;
+import com.roberlan.polaris.core.usecase.ports.out.TaskRepositoryPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

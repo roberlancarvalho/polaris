@@ -3,9 +3,10 @@ package com.roberlan.polaris.core.usecase.impl;
 import com.roberlan.polaris.core.domain.exception.ResourceNotFoundException;
 import com.roberlan.polaris.core.domain.model.Task;
 import com.roberlan.polaris.core.domain.model.TaskStatus;
+import com.roberlan.polaris.core.usecase.ports.in.TaskInputPort;
+import com.roberlan.polaris.core.usecase.ports.out.TaskRepositoryPort;
 import com.roberlan.polaris.infrastructure.config.RabbitMQConfig;
-import com.roberlan.polaris.presentation.controller.ports.in.TaskInputPort;
-import com.roberlan.polaris.presentation.controller.ports.out.TaskRepositoryPort;
+
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 

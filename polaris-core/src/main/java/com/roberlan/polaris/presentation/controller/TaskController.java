@@ -3,7 +3,7 @@ package com.roberlan.polaris.presentation.controller;
 import com.roberlan.polaris.core.domain.model.Role;
 import com.roberlan.polaris.core.domain.model.Task;
 import com.roberlan.polaris.core.domain.model.User;
-import com.roberlan.polaris.presentation.controller.ports.in.TaskInputPort;
+import com.roberlan.polaris.core.usecase.ports.in.TaskInputPort;
 import com.roberlan.polaris.presentation.dto.request.TaskRequest;
 import com.roberlan.polaris.presentation.dto.response.TaskResponse;
 import jakarta.validation.Valid;
