@@ -11,7 +11,7 @@
           </ion-button>
         </ion-buttons>
 
-        <ion-title>Minhas Tarefas</ion-title>
+        <ion-title>{{ t('tasks.page_title') }}</ion-title>
 
         <ion-buttons slot="end">
           <ion-button @click="logout">
@@ -28,7 +28,7 @@
 
       <div class="content-wrapper" v-else>
         <div class="page-actions">
-          <h2>Gerenciar Tarefas</h2>
+          <h2>{{ t('tasks.title') }}</h2>
 
           <div class="action-buttons">
             <ion-button
@@ -38,7 +38,7 @@
               class="btn-delete"
             >
               <ion-icon slot="start" :icon="trashBinOutline"></ion-icon>
-              Excluir ({{ selectedTasks.length }})
+              {{ t('tasks.btn_delete') }} ({{ selectedTasks.length }})
             </ion-button>
 
             <ion-button
@@ -47,7 +47,7 @@
               @click="goToCreate"
             >
               <ion-icon slot="start" :icon="add"></ion-icon>
-              Nova Tarefa
+              {{ t('tasks.btn_new') }}
             </ion-button>
           </div>
         </div>
@@ -94,12 +94,15 @@ import {
   trashBinOutline,
 } from "ionicons/icons";
 import { onMounted, onUnmounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
 interface User {
   name: string;
   email: string;
 }
+
+const { t } = useI18n();
 
 const router = useRouter();
 const tasks = ref([]);
@@ -141,7 +144,7 @@ const fetchData = async () => {
     selectedTasks.value = [];
   } catch (error) {
     console.error(error);
-    presentToast("Erro ao carregar dados", "danger");
+    presentToast(t('tasks.err_generic'), "danger");
   } finally {
     loading.value = false;
   }
@@ -196,12 +199,12 @@ const deleteSingleTask = async (task: any) => {
     buttons: [
       { text: "Cancelar", role: "cancel" },
       {
-        text: "Excluir",
+        text: t('tasks.btn_delete'),
         role: "confirm",
         cssClass: "danger",
         handler: async () => {
           await api.delete(`/tasks/${task.id}`);
-          presentToast("Tarefa excluída.");
+          presentToast(t('tasks.msg_deleted'));
           fetchData();
         },
       },
@@ -213,12 +216,12 @@ const deleteSingleTask = async (task: any) => {
 const deleteSelected = async () => {
   if (userRole.value !== "ADMIN") return;
   const alert = await alertController.create({
-    header: "Exclusão em Massa",
-    message: `Tem certeza que deseja excluir ${selectedTasks.value.length} tarefas?`,
+    header: t('tasks.confirm_delete_title'),
+    message: `${t('tasks.confirm_delete_msg')} ${selectedTasks.value.length} itens?`,
     buttons: [
-      { text: "Cancelar", role: "cancel" },
+      { text: t('tasks.btn_cancel'), role: "cancel" },
       {
-        text: "Sim, Excluir",
+        text: t('tasks.btn_delete'),
         role: "confirm",
         cssClass: "danger",
         handler: async () => {

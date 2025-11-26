@@ -5,7 +5,7 @@
         <ion-buttons slot="start">
           <ion-back-button default-href="/tasks"></ion-back-button>
         </ion-buttons>
-        <ion-title>Nova Tarefa</ion-title>
+        <ion-title>{{ $t("tasks.create_page_title") }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -13,28 +13,34 @@
       <div class="form-container">
         <ion-list lines="full" class="input-list">
           <ion-item>
-            <ion-label position="stacked">Título</ion-label>
+            <ion-label position="stacked">{{
+              $t("tasks.field_title")
+            }}</ion-label>
             <ion-input
               v-model="form.title"
-              placeholder="Ex: Reunião com cliente"
+              :placeholder="$t('tasks.field_title_placeholder')"
               type="text"
             ></ion-input>
           </ion-item>
 
           <ion-item>
-            <ion-label position="stacked">Descrição</ion-label>
+            <ion-label position="stacked">{{
+              $t("tasks.field_desc")
+            }}</ion-label>
             <ion-textarea
               v-model="form.description"
-              placeholder="Detalhes da tarefa..."
+              :placeholder="$t('tasks.field_desc_placeholder')"
               :rows="4"
             ></ion-textarea>
           </ion-item>
 
           <ion-item>
-            <ion-label position="stacked">Responsável</ion-label>
+            <ion-label position="stacked">{{
+              $t("tasks.field_assignee")
+            }}</ion-label>
             <ion-select
               v-model="form.assignedTo"
-              placeholder="Selecione um usuário"
+              :placeholder="$t('tasks.field_assignee_placeholder')"
               interface="popover"
             >
               <ion-select-option
@@ -54,7 +60,7 @@
             @click="submitTask"
             :disabled="loading || !form.title"
           >
-            <span v-if="!loading">CRIAR TAREFA</span>
+            <span v-if="!loading">{{ $t("tasks.btn_create") }}</span>
             <ion-spinner v-else name="crescent"></ion-spinner>
           </ion-button>
         </div>
@@ -86,7 +92,9 @@ import {
 } from "@ionic/vue";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const router = useRouter();
 const loading = ref(false);
 
@@ -96,11 +104,7 @@ interface User {
 }
 const users = ref<User[]>([]);
 
-const form = reactive({
-  title: "",
-  description: "",
-  assignedTo: "",
-});
+const form = reactive({ title: "", description: "", assignedTo: "" });
 
 const loadUsers = async () => {
   try {
@@ -113,9 +117,9 @@ const loadUsers = async () => {
 
 const presentToast = async (message: string, color: string = "success") => {
   const toast = await toastController.create({
-    message: message,
+    message,
     duration: 2000,
-    color: color,
+    color,
     position: "bottom",
   });
   await toast.present();
@@ -132,11 +136,11 @@ const submitTask = async () => {
       assignedTo: form.assignedTo,
     });
 
-    await presentToast("Tarefa criada com sucesso!");
+    await presentToast(t("tasks.msg_created"));
     router.replace("/tasks");
   } catch (error) {
     console.error(error);
-    await presentToast("Erro ao criar tarefa.", "danger");
+    await presentToast(t("tasks.err_create"), "danger");
   } finally {
     loading.value = false;
   }

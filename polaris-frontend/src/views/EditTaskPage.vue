@@ -5,7 +5,7 @@
         <ion-buttons slot="start">
           <ion-back-button default-href="/tasks"></ion-back-button>
         </ion-buttons>
-        <ion-title>Editar Tarefa</ion-title>
+        <ion-title>{{ $t("tasks.edit_page_title") }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -17,38 +17,48 @@
       <div v-else class="form-container">
         <ion-list lines="full" class="input-list">
           <ion-item class="readonly-item">
-            <ion-label position="stacked">Código</ion-label>
+            <ion-label position="stacked">{{
+              $t("tasks.field_code")
+            }}</ion-label>
             <ion-input :value="formattedId" readonly></ion-input>
           </ion-item>
 
           <ion-item>
-            <ion-label position="stacked">Status</ion-label>
+            <ion-label position="stacked">{{
+              $t("tasks.col_status")
+            }}</ion-label>
             <ion-select v-model="form.status" interface="popover">
               <ion-select-option
                 v-for="(label, value) in statusOptions"
                 :key="value"
                 :value="value"
               >
-                {{ label }}
+                {{ $t("status." + value) }}
               </ion-select-option>
             </ion-select>
           </ion-item>
 
           <ion-item>
-            <ion-label position="stacked">Título</ion-label>
+            <ion-label position="stacked">{{
+              $t("tasks.field_title")
+            }}</ion-label>
             <ion-input v-model="form.title" type="text"></ion-input>
           </ion-item>
 
           <ion-item>
-            <ion-label position="stacked">Descrição</ion-label>
+            <ion-label position="stacked">{{
+              $t("tasks.field_desc")
+            }}</ion-label>
             <ion-textarea v-model="form.description" :rows="6"></ion-textarea>
           </ion-item>
 
           <ion-item>
-            <ion-label position="stacked">Responsável</ion-label>
+            <ion-label position="stacked">{{
+              $t("tasks.field_assignee")
+            }}</ion-label>
             <ion-select
               v-model="form.assignedTo"
-              placeholder="Selecione um usuário"
+              :placeholder="$t('tasks.field_assignee_placeholder')"
               interface="popover"
             >
               <ion-select-option
@@ -68,7 +78,7 @@
             @click="updateTask"
             :disabled="saving || !form.title"
           >
-            <span v-if="!saving">SALVAR ALTERAÇÕES</span>
+            <span v-if="!saving">{{ $t("tasks.btn_save") }}</span>
             <ion-spinner v-else name="crescent"></ion-spinner>
           </ion-button>
 
@@ -78,7 +88,7 @@
             color="medium"
             @click="router.back()"
           >
-            Cancelar
+            {{ $t("tasks.btn_cancel") }}
           </ion-button>
         </div>
       </div>
@@ -108,11 +118,12 @@ import {
   toastController,
 } from "@ionic/vue";
 import { computed, onMounted, reactive, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-
 const taskId = route.params.id as string;
 const loadingData = ref(true);
 const saving = ref(false);
@@ -124,12 +135,12 @@ interface User {
 const users = ref<User[]>([]);
 
 const statusOptions = {
-  PLANNED: "Planejado",
-  IN_PROGRESS: "Em Andamento",
-  IN_REVIEW: "Em Revisão",
-  COMPLETED: "Concluído",
-  BLOCKED: "Impedimento",
-  CANCELLED: "Cancelado",
+  PLANNED: "Planned",
+  IN_PROGRESS: "In Progress",
+  IN_REVIEW: "In Review",
+  COMPLETED: "Completed",
+  BLOCKED: "Blocked",
+  CANCELLED: "Cancelled",
 };
 
 const form = reactive({
@@ -138,17 +149,14 @@ const form = reactive({
   assignedTo: "",
   status: "",
 });
-
-const formattedId = computed(() => {
-  return "#" + taskId.substring(0, 6).toUpperCase();
-});
+const formattedId = computed(() => "#" + taskId.substring(0, 6).toUpperCase());
 
 const loadUsers = async () => {
   try {
     const res = await api.get("/auth/users");
     users.value = res.data;
   } catch (error) {
-    console.error("Erro ao carregar usuários", error);
+    console.error(error);
   }
 };
 
@@ -160,8 +168,7 @@ const loadTask = async () => {
     form.assignedTo = response.data.assignedTo;
     form.status = response.data.status;
   } catch (error) {
-    console.error("Erro ao carregar tarefa", error);
-    presentToast("Erro ao carregar dados.", "danger");
+    presentToast(t("tasks.err_generic"), "danger");
     router.replace("/tasks");
   } finally {
     loadingData.value = false;
@@ -171,7 +178,6 @@ const loadTask = async () => {
 const updateTask = async () => {
   if (!form.title) return;
   saving.value = true;
-
   try {
     await api.put(`/tasks/${taskId}`, {
       title: form.title,
@@ -179,12 +185,10 @@ const updateTask = async () => {
       assignedTo: form.assignedTo,
       status: form.status,
     });
-
-    await presentToast("Tarefa atualizada com sucesso!");
+    await presentToast(t("tasks.msg_updated"));
     router.replace("/tasks");
   } catch (error) {
-    console.error("Erro ao salvar", error);
-    presentToast("Erro ao atualizar tarefa.", "danger");
+    presentToast(t("tasks.err_update"), "danger");
   } finally {
     saving.value = false;
   }

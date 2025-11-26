@@ -13,10 +13,10 @@
               ></ion-checkbox>
             </th>
             <th @click="sortBy('id')">
-              Cód <ion-icon :icon="getSortIcon('id')"></ion-icon>
+              {{ t('tasks.col_code') }} <ion-icon :icon="getSortIcon('id')"></ion-icon>
             </th>
             <th @click="sortBy('title')">
-              Título <ion-icon :icon="getSortIcon('title')"></ion-icon>
+              {{ t('tasks.col_title') }} <ion-icon :icon="getSortIcon('title')"></ion-icon>
             </th>
 
             <th>
@@ -25,7 +25,7 @@
                 @click="openFilterPopover"
                 :class="{ active: filterUser !== '' }"
               >
-                <span>Responsável</span>
+                <span>{{ t('tasks.col_assignee') }}</span>
                 <ion-icon
                   :icon="filterUser !== '' ? funnel : funnelOutline"
                 ></ion-icon>
@@ -36,10 +36,10 @@
               Status <ion-icon :icon="getSortIcon('status')"></ion-icon>
             </th>
             <th @click="sortBy('updatedAt')">
-              Atualizado em
+              {{ t('tasks.col_updated') }}
               <ion-icon :icon="getSortIcon('updatedAt')"></ion-icon>
             </th>
-            <th class="col-actions">Ações</th>
+            <th class="col-actions">{{ t('tasks.col_actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -180,10 +180,10 @@
     >
       <ion-content class="ion-no-padding">
         <ion-list lines="full">
-          <ion-list-header>Filtrar por:</ion-list-header>
+          <ion-list-header>{{ t('tasks.filter') }}</ion-list-header>
 
           <ion-item button @click="selectFilterUser('')">
-            <ion-label>Todos</ion-label>
+            <ion-label>{{ t('tasks.filter_all') }}</ion-label>
             <ion-icon
               v-if="filterUser === ''"
               slot="end"
@@ -193,7 +193,7 @@
           </ion-item>
 
           <ion-item button @click="selectFilterUser('ME')">
-            <ion-label>Atribuídas a mim</ion-label>
+            <ion-label>{{ t('tasks.filter_me') }}</ion-label>
             <ion-icon
               v-if="filterUser === 'ME'"
               slot="end"
@@ -250,6 +250,7 @@ import {
   trashOutline,
 } from "ionicons/icons";
 import { computed, defineEmits, defineProps, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
 type User = { name: string; email: string } | string;
 
@@ -263,6 +264,8 @@ interface Task {
   completedAt?: string;
   updatedAt?: string;
 }
+
+const { t } = useI18n();
 
 const props = defineProps<{
   tasks: Task[];
@@ -320,12 +323,12 @@ const copyToClipboard = async (t: string) => {
 };
 const translateStatus = (s: string) => {
   const m: any = {
-    PLANNED: "Planejado",
-    IN_PROGRESS: "Em Andamento",
-    IN_REVIEW: "Em Revisão",
-    COMPLETED: "Concluído",
-    BLOCKED: "Impedimento",
-    CANCELLED: "Cancelado",
+    PLANNED: t('status.PLANNED'),
+    IN_PROGRESS: t('status.IN_PROGRESS'),
+    IN_REVIEW: t('status.IN_REVIEW'),
+    COMPLETED: t('status.COMPLETED'),
+    BLOCKED: t('status.BLOCKED'),
+    CANCELLED: t('status.CANCELLED'),
   };
   return m[s] || s;
 };

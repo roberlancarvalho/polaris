@@ -9,16 +9,20 @@
         />
       </div>
 
-      <ion-card-title class="auth-title">Polaris</ion-card-title>
-      <ion-card-subtitle class="auth-subtitle"
-        >Tech North Systems</ion-card-subtitle
-      >
+      <ion-card-title class="auth-title">{{
+        $t("login.title")
+      }}</ion-card-title>
+      <ion-card-subtitle class="auth-subtitle">{{
+        $t("login.subtitle")
+      }}</ion-card-subtitle>
     </ion-card-header>
 
     <ion-card-content>
       <div class="input-group">
         <ion-item lines="full" class="custom-input">
-          <ion-label position="stacked">Email</ion-label>
+          <ion-label position="stacked">{{
+            $t("login.email_label")
+          }}</ion-label>
           <ion-input
             v-model="email"
             type="email"
@@ -27,7 +31,9 @@
         </ion-item>
 
         <ion-item lines="full" class="custom-input">
-          <ion-label position="stacked">Senha</ion-label>
+          <ion-label position="stacked">{{
+            $t("login.password_label")
+          }}</ion-label>
           <ion-input
             v-model="password"
             type="password"
@@ -45,7 +51,7 @@
           @click="login"
           :disabled="loading"
         >
-          <span v-if="!loading">ENTRAR</span>
+          <span v-if="!loading">{{ $t("login.btn_enter") }}</span>
           <ion-spinner v-else name="crescent"></ion-spinner>
         </ion-button>
       </div>
@@ -75,8 +81,10 @@ import {
 } from "@ionic/vue";
 import { alertCircleOutline } from "ionicons/icons";
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
+const { t } = useI18n();
 const router = useRouter();
 const email = ref("");
 const password = ref("");
@@ -85,7 +93,7 @@ const errorMessage = ref("");
 
 const login = async () => {
   if (!email.value || !password.value) {
-    errorMessage.value = "Preencha todos os campos.";
+    errorMessage.value = t("login.error_fields");
     return;
   }
 
@@ -109,9 +117,9 @@ const login = async () => {
   } catch (error: any) {
     console.error(error);
     if (error.response && error.response.status === 401) {
-      errorMessage.value = "Credenciais inválidas.";
+      errorMessage.value = t("login.error_cred");
     } else {
-      errorMessage.value = "Erro de conexão com o servidor.";
+      errorMessage.value = t("login.error_conn");
     }
   } finally {
     loading.value = false;

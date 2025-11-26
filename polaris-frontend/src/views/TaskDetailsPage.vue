@@ -5,7 +5,7 @@
         <ion-buttons slot="start">
           <ion-back-button default-href="/tasks"></ion-back-button>
         </ion-buttons>
-        <ion-title>Detalhes da Tarefa</ion-title>
+        <ion-title>{{ $t("tasks.details_page_title") }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -20,12 +20,12 @@
           <div class="action-buttons">
             <ion-button color="danger" @click="confirmDelete">
               <ion-icon slot="start" :icon="trashBinOutline"></ion-icon>
-              EXCLUIR
+              {{ $t("tasks.btn_delete") }}
             </ion-button>
 
             <ion-button class="btn-primary" @click="goToEdit">
               <ion-icon slot="start" :icon="createOutline"></ion-icon>
-              EDITAR
+              {{ $t("tasks.btn_edit") }}
             </ion-button>
           </div>
         </div>
@@ -38,42 +38,44 @@
             </div>
 
             <div :class="['status-badge', getStatusClass(task.status)]">
-              {{ translateStatus(task.status) }}
+              {{ $t("status." + task.status) }}
             </div>
           </div>
 
           <h1 class="task-title">{{ task.title }}</h1>
 
           <div class="assignee-section">
-            <span class="label">Responsável:</span>
+            <span class="label">{{ $t("tasks.field_assignee") }}:</span>
             <div class="assignee-pill" v-if="task.assignedTo">
               <div class="avatar-circle">
                 {{ getInitials(getUserName(task.assignedTo)) }}
               </div>
               <span class="name">{{ getUserName(task.assignedTo) }}</span>
             </div>
-            <span v-else class="unassigned">Não atribuído</span>
+            <span v-else class="unassigned">{{
+              $t("tasks.label_unassigned")
+            }}</span>
           </div>
 
           <div class="divider"></div>
 
           <div class="description-box">
-            <span class="label">DESCRIÇÃO</span>
-            <p>{{ task.description || "Sem descrição fornecida." }}</p>
+            <span class="label">{{ $t("tasks.field_desc") }}</span>
+            <p>{{ task.description || "---" }}</p>
           </div>
 
           <div class="meta-info">
             <div class="meta-item">
               <ion-icon :icon="calendarOutline"></ion-icon>
               <span
-                >Criado em:
+                >{{ $t("tasks.label_created") }}:
                 <strong>{{ formatDate(task.createdAt) }}</strong></span
               >
             </div>
             <div class="meta-item">
               <ion-icon :icon="timeOutline"></ion-icon>
               <span
-                >Atualizado em:
+                >{{ $t("tasks.col_updated") }}:
                 <strong>{{ formatDate(task.updatedAt) }}</strong></span
               >
             </div>
@@ -85,35 +87,38 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import api from "@/services/api";
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonButtons,
+  alertController,
   IonBackButton,
   IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
   IonIcon,
+  IonPage,
   IonSpinner,
+  IonTitle,
+  IonToolbar,
   toastController,
-  alertController,
 } from "@ionic/vue";
 import {
-  createOutline,
-  copyOutline,
   calendarOutline,
+  copyOutline,
+  createOutline,
   timeOutline,
   trashBinOutline,
 } from "ionicons/icons";
-import api from "@/services/api";
+import { onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 
 interface User {
   name: string;
   email: string;
 }
+
+const { t } = useI18n();
 
 const route = useRoute();
 const router = useRouter();
@@ -134,7 +139,7 @@ const loadData = async () => {
     task.value = taskRes.data;
     allUsers.value = usersRes.data;
   } catch (error) {
-    console.error("Erro ao carregar", error);
+    // console.error("Erro ao carregar", error);
     router.replace("/tasks");
   } finally {
     loading.value = false;
@@ -147,19 +152,19 @@ const goToEdit = () => {
 
 const confirmDelete = async () => {
   const alert = await alertController.create({
-    header: "Confirmar Exclusão",
-    message: "Tem certeza que deseja excluir esta tarefa permanentemente?",
+    header: t("tasks.confirm_delete_title"),
+    message: t("tasks.confirm_delete_msg"),
     buttons: [
-      { text: "Cancelar", role: "cancel" },
+      { text: t("tasks.btn_cancel"), role: "cancel" },
       {
-        text: "Excluir",
+        text: t("tasks.btn_delete"),
         role: "confirm",
         cssClass: "danger",
         handler: async () => {
           try {
             await api.delete(`/tasks/${taskId}`);
             const toast = await toastController.create({
-              message: "Tarefa excluída.",
+              message: t("tasks.msg_deleted"),
               duration: 2000,
             });
             toast.present();
@@ -205,13 +210,11 @@ const getUserName = (email: string) => {
 };
 const copyId = async () => {
   await navigator.clipboard.writeText(task.value.id);
-  const t = await toastController.create({
-    message: "ID copiado!",
-    duration: 1000,
-    color: "dark",
-    position: "bottom",
+  const toast = await toastController.create({
+      message: t('tasks.id_copied'),
+    duration: 1000, color: "dark", position: "bottom",
   });
-  t.present();
+  await toast.present();
 };
 
 onMounted(() => {
