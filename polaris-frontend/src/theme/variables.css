@@ -1,0 +1,41 @@
+ion-toolbar[color="primary"] {
+  --color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+ion-toolbar[color="primary"] ion-buttons,
+ion-toolbar[color="primary"] ion-button,
+ion-toolbar[color="primary"] ion-icon,
+ion-toolbar[color="primary"] ion-back-button {
+  --color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+ion-button[color="primary"],
+ion-button[color="danger"] {
+  --color: #ffffff !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.ion-color-primary {
+  --ion-color-base: var(--ion-color-primary, #3880ff);
+  --ion-color-base-rgb: var(--ion-color-primary-rgb, 56, 128, 255);
+
+  --ion-color-contrast: #ffffff !important;
+
+  --ion-color-shade: #3171e0;
+  --ion-color-tint: #4c8dff;
+}
+
+.ion-color-danger {
+  --ion-color-base: var(--ion-color-danger, #eb445a);
+  --ion-color-base-rgb: var(--ion-color-danger-rgb, 235, 68, 90);
+
+  --ion-color-contrast: #ffffff !important;
+  --ion-color-contrast-rgb: 255, 255, 255 !important;
+
+  --ion-color-shade: #cf3c4f;
+  --ion-color-tint: #ed576b;
+}

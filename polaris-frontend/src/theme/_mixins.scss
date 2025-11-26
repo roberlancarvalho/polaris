@@ -1,0 +1,37 @@
+@use "sass:color";
+
+$card-bg: #ffffff;
+$text-color: #333;
+$radius: 12px;
+
+@mixin badge-style($bg-color, $text-color: white) {
+  background-color: $bg-color;
+  color: $text-color;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge {
+  &.planned {
+    @include badge-style(#8aadb1);
+  }
+  &.in-progress {
+    @include badge-style(#3498db);
+  }
+  &.in-review {
+    @include badge-style(#c76bfc);
+  }
+  &.completed {
+    @include badge-style(#2ecc71);
+  }
+  &.blocked {
+    @include badge-style(#ff8a1c);
+  }
+  &.cancelled {
+    @include badge-style(#313131);
+  }
+}

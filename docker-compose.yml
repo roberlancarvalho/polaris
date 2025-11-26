@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  polaris-redis:
+    image: redis:7-alpine
+    container_name: polaris-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - polaris-redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - polaris-network
+
+  polaris-rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: polaris-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - polaris-network
+
+  polaris-auth:
+    build: ./polaris-auth
+    image: roberlan/polaris-auth:latest
+    container_name: polaris-auth
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATA_REDIS_HOST=polaris-redis
+      - SPRING_DATA_REDIS_PORT=6379
+    depends_on:
+      - polaris-redis
+    networks:
+      - polaris-network
+
+  polaris-core:
+    build: ./polaris-core
+    image: roberlan/polaris-core:latest
+    container_name: polaris-core
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_REDIS_HOST=polaris-redis
+      - SPRING_DATA_REDIS_PORT=6379
+      - SPRING_RABBITMQ_HOST=polaris-rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+    depends_on:
+      - polaris-redis
+      - polaris-rabbitmq
+    networks:
+      - polaris-network
+    restart: always
+
+  polaris-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: polaris-ui
+    environment:
+      - REDIS_HOSTS=local:polaris-redis:6379
+    ports:
+      - "8082:8081"
+    depends_on:
+      - polaris-redis
+    networks:
+      - polaris-network
+
+volumes:
+  polaris-redis-data:
+
+networks:
+  polaris-network:
+    driver: bridge
