@@ -13,10 +13,12 @@
               ></ion-checkbox>
             </th>
             <th @click="sortBy('id')">
-              {{ t('tasks.col_code') }} <ion-icon :icon="getSortIcon('id')"></ion-icon>
+              {{ t("tasks.col_code") }}
+              <ion-icon :icon="getSortIcon('id')"></ion-icon>
             </th>
             <th @click="sortBy('title')">
-              {{ t('tasks.col_title') }} <ion-icon :icon="getSortIcon('title')"></ion-icon>
+              {{ t("tasks.col_title") }}
+              <ion-icon :icon="getSortIcon('title')"></ion-icon>
             </th>
 
             <th>
@@ -25,7 +27,7 @@
                 @click="openFilterPopover"
                 :class="{ active: filterUser !== '' }"
               >
-                <span>{{ t('tasks.col_assignee') }}</span>
+                <span>{{ t("tasks.col_assignee") }}</span>
                 <ion-icon
                   :icon="filterUser !== '' ? funnel : funnelOutline"
                 ></ion-icon>
@@ -33,13 +35,14 @@
             </th>
 
             <th @click="sortBy('status')">
-              Status <ion-icon :icon="getSortIcon('status')"></ion-icon>
+              {{ t("tasks.col_status") }}
+              <ion-icon :icon="getSortIcon('status')"></ion-icon>
             </th>
             <th @click="sortBy('updatedAt')">
-              {{ t('tasks.col_updated') }}
+              {{ t("tasks.col_updated") }}
               <ion-icon :icon="getSortIcon('updatedAt')"></ion-icon>
             </th>
-            <th class="col-actions">{{ t('tasks.col_actions') }}</th>
+            <th class="col-actions">{{ t("tasks.col_actions") }}</th>
           </tr>
         </thead>
         <tbody>
@@ -70,7 +73,12 @@
 
             <td>
               <div class="assignee-badge" v-if="task.assignedTo">
-                <div class="avatar-circle">
+                <img
+                  v-if="resolveUserAvatar(task.assignedTo)"
+                  :src="resolveUserAvatar(task.assignedTo) || ''"
+                  class="avatar-img"
+                />
+                <div v-else class="avatar-circle">
                   {{ getInitials(resolveUserName(task.assignedTo)) }}
                 </div>
                 <span>{{ resolveUserName(task.assignedTo) }}</span>
@@ -85,7 +93,7 @@
                 @click="(e) => openStatusPopover(e, task)"
               >
                 <span :class="['status-badge', getStatusClass(task.status)]">
-                  {{ translateStatus(task.status) }}
+                  {{ t("status." + task.status) }}
                 </span>
                 <ion-icon
                   v-if="canChangeStatus(task)"
@@ -123,9 +131,7 @@
           </tr>
           <tr v-if="paginatedTasks.length === 0">
             <td :colspan="userRole === 'ADMIN' ? 8 : 7" class="text-center">
-              {{
-                filterUser ? "Nenhuma tarefa encontrada." : "Nenhum registro."
-              }}
+              {{ filterUser ? t("tasks.empty") : t("tasks.empty") }}
             </td>
           </tr>
         </tbody>
@@ -166,7 +172,7 @@
             :key="status"
             @click="confirmStatusChange(status)"
           >
-            <ion-label>{{ translateStatus(status) }}</ion-label>
+            <ion-label>{{ t("status." + status) }}</ion-label>
           </ion-item>
         </ion-list>
       </ion-content>
@@ -180,10 +186,10 @@
     >
       <ion-content class="ion-no-padding">
         <ion-list lines="full">
-          <ion-list-header>{{ t('tasks.filter') }}</ion-list-header>
+          <ion-list-header>{{ t("tasks.filter") }}:</ion-list-header>
 
           <ion-item button @click="selectFilterUser('')">
-            <ion-label>{{ t('tasks.filter_all') }}</ion-label>
+            <ion-label>{{ t("tasks.filter_all") }}</ion-label>
             <ion-icon
               v-if="filterUser === ''"
               slot="end"
@@ -193,7 +199,7 @@
           </ion-item>
 
           <ion-item button @click="selectFilterUser('ME')">
-            <ion-label>{{ t('tasks.filter_me') }}</ion-label>
+            <ion-label>{{ t("tasks.filter_me") }}</ion-label>
             <ion-icon
               v-if="filterUser === 'ME'"
               slot="end"
@@ -252,7 +258,9 @@ import {
 import { computed, defineEmits, defineProps, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
-type User = { name: string; email: string } | string;
+const { t } = useI18n();
+
+type User = { name: string; email: string; avatarUrl?: string } | string;
 
 interface Task {
   id: string;
@@ -264,8 +272,6 @@ interface Task {
   completedAt?: string;
   updatedAt?: string;
 }
-
-const { t } = useI18n();
 
 const props = defineProps<{
   tasks: Task[];
@@ -309,29 +315,30 @@ const resolveUserName = (email: string) => {
   return resolveUserNameObj(user);
 };
 
+const resolveUserAvatar = (email?: string) => {
+  if (!email) return null;
+  const user = props.allUsers.find((u) => resolveUserEmail(u) === email);
+  if (user && typeof user !== "string" && user.avatarUrl) return user.avatarUrl;
+  return null;
+};
+
 const getInitials = (n: string) => (n ? n.substring(0, 2).toUpperCase() : "??");
 const getShortId = (id: string) => (id ? id.substring(0, 6).toUpperCase() : "");
-const copyToClipboard = async (t: string) => {
-  await navigator.clipboard.writeText(t);
+const copyToClipboard = async (text: string) => {
+  await navigator.clipboard.writeText(text);
   const to = await toastController.create({
-    message: "Copiado!",
+    message: t("tasks.id_copied"),
     duration: 1000,
     color: "dark",
     position: "bottom",
   });
   to.present();
 };
+
 const translateStatus = (s: string) => {
-  const m: any = {
-    PLANNED: t('status.PLANNED'),
-    IN_PROGRESS: t('status.IN_PROGRESS'),
-    IN_REVIEW: t('status.IN_REVIEW'),
-    COMPLETED: t('status.COMPLETED'),
-    BLOCKED: t('status.BLOCKED'),
-    CANCELLED: t('status.CANCELLED'),
-  };
-  return m[s] || s;
+  return t("status." + s);
 };
+
 const getStatusClass = (s: string) =>
   s ? s.toLowerCase().replace("_", "-") : "";
 
@@ -371,20 +378,16 @@ const getAllowedStatuses = (s: string, r: string) => {
 
 const canChangeStatus = (task: Task) => {
   if (props.userRole === "ADMIN") return true;
-
   if (props.userRole === "USER") {
     return task.assignedTo === props.currentUser;
   }
-
   return false;
 };
 
 const openStatusPopover = (e: Event, task: Task) => {
   if (!canChangeStatus(task)) return;
-
   const opts = getAllowedStatuses(task.status, props.userRole);
   if (!opts.length) return;
-
   editingTask.value = task;
   availableStatuses.value = opts;
   popoverEvent.value = e;
@@ -552,6 +555,13 @@ table {
   }
 }
 
+.avatar-img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .header-filter {
   display: inline-flex;
   align-items: center;
@@ -711,6 +721,6 @@ ion-checkbox {
 }
 
 .white-popover .popover-content {
-  background: #df3030 !important;
+  background: #ffffff !important;
 }
 </style>

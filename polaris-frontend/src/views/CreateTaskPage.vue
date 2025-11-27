@@ -91,8 +91,8 @@ import {
   toastController,
 } from "@ionic/vue";
 import { onMounted, reactive, ref } from "vue";
-import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -104,7 +104,11 @@ interface User {
 }
 const users = ref<User[]>([]);
 
-const form = reactive({ title: "", description: "", assignedTo: "" });
+const form = reactive({
+  title: "",
+  description: "",
+  assignedTo: "",
+});
 
 const loadUsers = async () => {
   try {
@@ -117,9 +121,9 @@ const loadUsers = async () => {
 
 const presentToast = async (message: string, color: string = "success") => {
   const toast = await toastController.create({
-    message,
+    message: message,
     duration: 2000,
-    color,
+    color: color,
     position: "bottom",
   });
   await toast.present();

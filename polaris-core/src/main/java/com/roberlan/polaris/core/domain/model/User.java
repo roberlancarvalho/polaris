@@ -5,15 +5,21 @@ public class User {
     private String email;
     private String password;
     private Role role;
+    private String avatarUrl;
     
     public User() {
     }
     
-    public User(String name, String email, String password, Role role) {
+    public User(String name, String email, String password, Role role, String avatarUrl) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.avatarUrl = avatarUrl;
+    }
+    
+    public User(String name, String email, String password, Role role) {
+        this(name, email, password, role, null);
     }
     
     public String getName() {
@@ -46,5 +52,13 @@ public class User {
     
     public void setRole(Role role) {
         this.role = role;
+    }
+    
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+    
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }

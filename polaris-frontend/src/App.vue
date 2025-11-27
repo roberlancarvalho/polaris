@@ -14,14 +14,24 @@
 
       <ion-content class="menu-content">
         <div class="user-info ion-padding">
-          <h3 class="user-name">
-            {{ userName || $t("menu.visitor") }}
-          </h3>
-          <div class="role-badge">
-            {{
-              userRole === "ADMIN" ? $t("menu.manager") : $t("menu.developer")
-            }}
+          <div class="avatar-container" @click="triggerAvatarUpload">
+            <img v-if="userAvatar" :src="userAvatar" class="user-avatar-img" />
+            <div v-else class="user-avatar-placeholder">
+              {{ getUserInitials(userName) }}
+            </div>
+            <div class="camera-icon">
+              <ion-icon :icon="cameraOutline"></ion-icon>
+            </div>
           </div>
+
+          <h3 class="user-name">{{ userName || "Visitante" }}</h3>
+          <input
+            type="file"
+            ref="avatarInput"
+            style="display: none"
+            accept="image/*"
+            @change="handleAvatarChange"
+          />
         </div>
 
         <ion-list lines="none" class="menu-list">
@@ -106,6 +116,21 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
+import { cameraOutline } from "ionicons/icons";
+import api from "@/services/api";
+
+const userAvatar = ref("");
+const avatarInput = ref<HTMLInputElement | null>(null);
+
+const getUserInitials = (name: any) => {
+  const str = typeof name === "string" ? name : name?.value ?? "";
+  const cleaned = (str || "").trim();
+  if (!cleaned) return "";
+  const parts = cleaned.split(/\s+/);
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+  return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+};
+
 const { t, locale } = useI18n();
 const route = useRoute();
 const router = useRouter();
@@ -127,6 +152,29 @@ const loadUserData = () => {
     userName.value = storedName.charAt(0).toUpperCase() + storedName.slice(1);
   } else {
     userName.value = "";
+  }
+
+  userAvatar.value = localStorage.getItem("polaris_avatar") || "";
+};
+
+const triggerAvatarUpload = () => avatarInput.value?.click();
+
+const handleAvatarChange = async (event: any) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const res = await api.post("/auth/me/avatar", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    userAvatar.value = res.data.avatarUrl;
+    localStorage.setItem("polaris_avatar", userAvatar.value);
+  } catch (e) {
+    console.error(e);
   }
 };
 

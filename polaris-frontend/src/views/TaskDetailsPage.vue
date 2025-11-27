@@ -89,7 +89,6 @@
 <script setup lang="ts">
 import api from "@/services/api";
 import {
-  alertController,
   IonBackButton,
   IonButton,
   IonButtons,
@@ -100,6 +99,7 @@ import {
   IonSpinner,
   IonTitle,
   IonToolbar,
+  alertController,
   toastController,
 } from "@ionic/vue";
 import {
@@ -110,16 +110,10 @@ import {
   trashBinOutline,
 } from "ionicons/icons";
 import { onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-
-interface User {
-  name: string;
-  email: string;
-}
+import { useRoute, useRouter } from "vue-router";
 
 const { t } = useI18n();
-
 const route = useRoute();
 const router = useRouter();
 const taskId = route.params.id as string;
@@ -127,6 +121,11 @@ const taskId = route.params.id as string;
 const loading = ref(true);
 const task = ref<any>({});
 const userRole = ref("");
+
+interface User {
+  name: string;
+  email: string;
+}
 const allUsers = ref<User[]>([]);
 
 const loadData = async () => {
@@ -139,7 +138,7 @@ const loadData = async () => {
     task.value = taskRes.data;
     allUsers.value = usersRes.data;
   } catch (error) {
-    // console.error("Erro ao carregar", error);
+    console.error("Erro ao carregar", error);
     router.replace("/tasks");
   } finally {
     loading.value = false;
@@ -191,17 +190,7 @@ const formatDate = (d?: string) =>
         minute: "2-digit",
       })
     : "-";
-const translateStatus = (s: string) => {
-  const m: any = {
-    PLANNED: "Planejado",
-    IN_PROGRESS: "Em Andamento",
-    IN_REVIEW: "Em Revisão",
-    COMPLETED: "Concluído",
-    BLOCKED: "Impedimento",
-    CANCELLED: "Cancelado",
-  };
-  return m[s] || s;
-};
+
 const getStatusClass = (s: string) =>
   s ? s.toLowerCase().replace("_", "-") : "";
 const getUserName = (email: string) => {
@@ -211,10 +200,12 @@ const getUserName = (email: string) => {
 const copyId = async () => {
   await navigator.clipboard.writeText(task.value.id);
   const toast = await toastController.create({
-      message: t('tasks.id_copied'),
-    duration: 1000, color: "dark", position: "bottom",
+    message: t("tasks.id_copied"),
+    duration: 1000,
+    color: "dark",
+    position: "bottom",
   });
-  await toast.present();
+  toast.present();
 };
 
 onMounted(() => {

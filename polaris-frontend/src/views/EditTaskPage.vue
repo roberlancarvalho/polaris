@@ -29,11 +29,11 @@
             }}</ion-label>
             <ion-select v-model="form.status" interface="popover">
               <ion-select-option
-                v-for="(label, value) in statusOptions"
-                :key="value"
-                :value="value"
+                v-for="status in statusKeys"
+                :key="status"
+                :value="status"
               >
-                {{ $t("status." + value) }}
+                {{ $t("status." + status) }}
               </ion-select-option>
             </ion-select>
           </ion-item>
@@ -124,6 +124,7 @@ import { useRoute, useRouter } from "vue-router";
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
+
 const taskId = route.params.id as string;
 const loadingData = ref(true);
 const saving = ref(false);
@@ -134,14 +135,14 @@ interface User {
 }
 const users = ref<User[]>([]);
 
-const statusOptions = {
-  PLANNED: "Planned",
-  IN_PROGRESS: "In Progress",
-  IN_REVIEW: "In Review",
-  COMPLETED: "Completed",
-  BLOCKED: "Blocked",
-  CANCELLED: "Cancelled",
-};
+const statusKeys = [
+  "PLANNED",
+  "IN_PROGRESS",
+  "IN_REVIEW",
+  "COMPLETED",
+  "BLOCKED",
+  "CANCELLED",
+];
 
 const form = reactive({
   title: "",
@@ -149,14 +150,17 @@ const form = reactive({
   assignedTo: "",
   status: "",
 });
-const formattedId = computed(() => "#" + taskId.substring(0, 6).toUpperCase());
+
+const formattedId = computed(() => {
+  return "#" + taskId.substring(0, 6).toUpperCase();
+});
 
 const loadUsers = async () => {
   try {
     const res = await api.get("/auth/users");
     users.value = res.data;
   } catch (error) {
-    console.error(error);
+    console.error("Erro ao carregar usuários", error);
   }
 };
 
@@ -168,6 +172,7 @@ const loadTask = async () => {
     form.assignedTo = response.data.assignedTo;
     form.status = response.data.status;
   } catch (error) {
+    console.error("Erro ao carregar tarefa", error);
     presentToast(t("tasks.err_generic"), "danger");
     router.replace("/tasks");
   } finally {
@@ -178,6 +183,7 @@ const loadTask = async () => {
 const updateTask = async () => {
   if (!form.title) return;
   saving.value = true;
+
   try {
     await api.put(`/tasks/${taskId}`, {
       title: form.title,
@@ -185,9 +191,11 @@ const updateTask = async () => {
       assignedTo: form.assignedTo,
       status: form.status,
     });
+
     await presentToast(t("tasks.msg_updated"));
     router.replace("/tasks");
   } catch (error) {
+    console.error("Erro ao salvar", error);
     presentToast(t("tasks.err_update"), "danger");
   } finally {
     saving.value = false;

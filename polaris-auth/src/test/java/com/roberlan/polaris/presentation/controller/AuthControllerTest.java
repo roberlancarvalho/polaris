@@ -41,7 +41,7 @@ class AuthControllerTest {
     @Test
     @DisplayName("Registrar um usuário com sucesso")
     void shouldRegisterUser() throws Exception {
-        User user = new User("Luke", "luke@polaris.com", "123", Role.USER);
+        User user = new User("Luke", "luke@polaris.com", "123", Role.USER, null);
         given(passwordEncoder.encode(any())).willReturn("senha_criptografada");
         
         mockMvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON).content(
@@ -71,7 +71,7 @@ class AuthControllerTest {
     @DisplayName("Retornar 401 se a senha estiver errada")
     void shouldFailLoginWithWrongPassword() throws Exception {
         String email = "vader@polaris.com";
-        User mockUser = new User("Vader", email, "senha_certa", Role.ADMIN);
+        User mockUser = new User("Vader", email, "senha_certa", Role.ADMIN, null);
         
         given(userRepository.findByEmail(email)).willReturn(Optional.of(mockUser));
         given(passwordEncoder.matches("errada", "senha_certa")).willReturn(false);
