@@ -19,6 +19,8 @@ public class S3StorageAdapter implements FileStoragePort {
     
     @Value("${AWS_S3_ENDPOINT}") private String endpoint;
     
+    @Value("${AWS_S3_PUBLIC_ENDPOINT}") private String publicEndpoint;
+    
     public S3StorageAdapter(S3Client s3Client) {
         this.s3Client = s3Client;
     }
@@ -32,6 +34,6 @@ public class S3StorageAdapter implements FileStoragePort {
         
         s3Client.putObject(request, RequestBody.fromInputStream(content, size));
         
-        return endpoint + "/" + bucketName + "/" + uniqueFileName;
+        return publicEndpoint + "/" + bucketName + "/" + uniqueFileName;
     }
 }

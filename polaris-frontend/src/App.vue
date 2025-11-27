@@ -25,6 +25,11 @@
           </div>
 
           <h3 class="user-name">{{ userName || "Visitante" }}</h3>
+          <h4 class="role-badge">
+            {{
+              userRole === "ADMIN" ? $t("menu.manager") : $t("menu.developer")
+            }}
+          </h4>
           <input
             type="file"
             ref="avatarInput"
@@ -58,6 +63,19 @@
             >
               <ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
               <ion-label>{{ $t("menu.new_task") }}</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+
+          <ion-menu-toggle :auto-hide="false">
+            <ion-item
+              router-link="/profile"
+              router-direction="forward"
+              :detail="false"
+              class="menu-item"
+              :class="{ selected: route.path === '/profile' }"
+            >
+              <ion-icon slot="start" :icon="cameraOutline"></ion-icon>
+              <ion-label>{{ $t("menu.profile") }}</ion-label>
             </ion-item>
           </ion-menu-toggle>
 
@@ -116,8 +134,8 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
-import { cameraOutline } from "ionicons/icons";
 import api from "@/services/api";
+import { cameraOutline } from "ionicons/icons";
 
 const userAvatar = ref("");
 const avatarInput = ref<HTMLInputElement | null>(null);
@@ -218,6 +236,8 @@ onMounted(() => {
   padding: 25px 20px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   .user-name {
     margin: 0;
     font-size: 1.4rem;
@@ -236,13 +256,23 @@ onMounted(() => {
     background: rgba(var(--ion-color-primary-rgb), 0.1);
     padding: 4px 8px;
     border-radius: 4px;
-    align-self: flex-start;
+    align-self: center;
   }
 }
 
 .menu-list {
   background: white;
   padding: 0 !important;
+}
+
+.user-avatar-img {
+  width: 120px;
+  height: 120px;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 3px solid rgba(0, 0, 0, 0.1);
 }
 
 .menu-item {

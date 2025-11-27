@@ -46,12 +46,21 @@
 
           <div class="assignee-section">
             <span class="label">{{ $t("tasks.field_assignee") }}:</span>
+
             <div class="assignee-pill" v-if="task.assignedTo">
-              <div class="avatar-circle">
+              <img
+                v-if="getAssignee(task.assignedTo)?.avatarUrl"
+                :src="getAssignee(task.assignedTo)?.avatarUrl"
+                class="avatar-circle-img"
+                @error="handleAvatarError(task.assignedTo)"
+              />
+
+              <div v-else class="avatar-circle">
                 {{ getInitials(getUserName(task.assignedTo)) }}
               </div>
               <span class="name">{{ getUserName(task.assignedTo) }}</span>
             </div>
+
             <span v-else class="unassigned">{{
               $t("tasks.label_unassigned")
             }}</span>
@@ -125,8 +134,20 @@ const userRole = ref("");
 interface User {
   name: string;
   email: string;
+  avatarUrl?: string;
 }
 const allUsers = ref<User[]>([]);
+
+const getAssignee = (email: string) => {
+  return allUsers.value.find((u) => u.email === email);
+};
+
+const handleAvatarError = (email: string) => {
+  const user = getAssignee(email);
+  if (user) {
+    user.avatarUrl = "";
+  }
+};
 
 const loadData = async () => {
   try {
@@ -324,6 +345,14 @@ onMounted(() => {
     font-weight: bold;
     font-size: 12px;
     text-transform: uppercase;
+  }
+  .avatar-circle-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: white;
   }
   .name {
     color: #333;

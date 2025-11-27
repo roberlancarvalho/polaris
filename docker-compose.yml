@@ -20,6 +20,11 @@ services:
       - "15672:15672"
     networks:
       - polaris-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   polaris-auth:
     build: ./polaris-auth
@@ -44,6 +49,7 @@ services:
     environment:
       - MINIO_ROOT_USER=polaris_admin
       - MINIO_ROOT_PASSWORD=polaris_password
+      - MINIO_SERVER_URL=http://localhost:9000
     command: server /data --console-address ":9001"
     volumes:
       - polaris-minio-data:/data
@@ -62,6 +68,7 @@ services:
       - SPRING_RABBITMQ_HOST=polaris-rabbitmq
       - SPRING_RABBITMQ_PORT=5672
       - AWS_S3_ENDPOINT=http://polaris-s3:9000
+      - AWS_S3_PUBLIC_ENDPOINT=http://localhost:9000
       - AWS_ACCESS_KEY=polaris_admin
       - AWS_SECRET_KEY=polaris_password
       - AWS_BUCKET_NAME=polaris-files

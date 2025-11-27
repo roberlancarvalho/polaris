@@ -50,4 +50,14 @@ public class UserController {
         
         return ResponseEntity.ok(new UserSummary(currentUser.getName(), currentUser.getEmail(), url));
     }
+    
+    @GetMapping("/me")
+    public ResponseEntity<UserSummary> getCurrentUser(Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+        
+        User user = userRepository.findByEmail(currentUser.getEmail()).orElseThrow(
+                () -> new RuntimeException("User not found"));
+        
+        return ResponseEntity.ok(new UserSummary(user.getName(), user.getEmail(), user.getAvatarUrl()));
+    }
 }

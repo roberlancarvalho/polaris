@@ -5,6 +5,7 @@ import { RouteRecordRaw } from "vue-router";
 import CreateTaskPage from "../views/CreateTaskPage.vue";
 import HomePage from "../views/HomePage.vue";
 import TasksPage from "../views/TasksPage.vue";
+import ProfilePage from "@/views/ProfilePage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -47,6 +48,15 @@ const routes: Array<RouteRecordRaw> = [
     path: "/tasks/details/:id",
     name: "TaskDetails",
     component: TaskDetailsPage,
+    beforeEnter: (to, from, next) => {
+      if (!localStorage.getItem("polaris_token")) next("/home");
+      else next();
+    },
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: ProfilePage,
     beforeEnter: (to, from, next) => {
       if (!localStorage.getItem("polaris_token")) next("/home");
       else next();
