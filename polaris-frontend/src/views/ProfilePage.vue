@@ -145,8 +145,10 @@ const loadProfile = async () => {
 
     if (userRes.data.avatarUrl) {
       localStorage.setItem("polaris_avatar", userRes.data.avatarUrl);
-      window.dispatchEvent(new Event("storage"));
+    } else {
+      localStorage.removeItem("polaris_avatar");
     }
+    window.dispatchEvent(new Event("storage"));
   } catch (error) {
     console.error(error);
   } finally {
@@ -169,7 +171,10 @@ const handleFileChange = async (event: any) => {
     });
 
     user.value.avatarUrl = res.data.avatarUrl;
+
     localStorage.setItem("polaris_avatar", res.data.avatarUrl);
+
+    window.dispatchEvent(new Event("storage"));
 
     const toast = await toastController.create({
       message: "Foto atualizada!",

@@ -12,8 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"> 
-        <!-- teste2 -->
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config"> 
+        <!-- teste4 -->
 
         <activity
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"

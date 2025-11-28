@@ -161,9 +161,12 @@ const isLoginPage = computed(
 
 const loadUserData = () => {
   userRole.value = localStorage.getItem("polaris_role") || "";
-  const storedName = localStorage.getItem("polaris_username");
 
+  userAvatar.value = localStorage.getItem("polaris_avatar") || "";
+
+  const storedName = localStorage.getItem("polaris_username");
   const savedLang = localStorage.getItem("polaris_lang");
+
   if (savedLang) locale.value = savedLang;
 
   if (storedName) {
@@ -172,10 +175,30 @@ const loadUserData = () => {
     userName.value = "";
   }
 
-  userAvatar.value = localStorage.getItem("polaris_avatar") || "";
+  if (!userAvatar.value && localStorage.getItem("polaris_token")) {
+    fetchAvatarUrl();
+  }
 };
 
 const triggerAvatarUpload = () => avatarInput.value?.click();
+
+const fetchAvatarUrl = async () => {
+  if (!localStorage.getItem("polaris_token")) return;
+
+  try {
+    const res = await api.get("/auth/me");
+
+    if (res.data.avatarUrl) {
+      userAvatar.value = res.data.avatarUrl;
+      localStorage.setItem("polaris_avatar", res.data.avatarUrl);
+    } else {
+      userAvatar.value = "";
+      localStorage.removeItem("polaris_avatar");
+    }
+  } catch (e) {
+    console.error("Erro ao buscar avatar no menu:", e);
+  }
+};
 
 const handleAvatarChange = async (event: any) => {
   const file = event.target.files[0];
@@ -191,6 +214,8 @@ const handleAvatarChange = async (event: any) => {
 
     userAvatar.value = res.data.avatarUrl;
     localStorage.setItem("polaris_avatar", userAvatar.value);
+
+    window.dispatchEvent(new Event("storage"));
   } catch (e) {
     console.error(e);
   }
@@ -207,6 +232,7 @@ const logout = () => {
   localStorage.removeItem("polaris_username");
   localStorage.removeItem("polaris_email");
   localStorage.removeItem("polaris_lang");
+  localStorage.removeItem("polaris_avatar");
 
   router.replace("/home");
 };
@@ -270,8 +296,22 @@ onMounted(() => {
   height: 120px;
   flex-direction: row;
   align-items: center;
-  border-radius: 10px;
+  border-radius: 50%;
   object-fit: cover;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar-placeholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--ion-color-secondary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: 700;
   border: 3px solid rgba(0, 0, 0, 0.1);
 }
 
