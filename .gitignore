@@ -36,6 +36,7 @@ yarn-error.log*
 pnpm-debug.log*
 .env.local
 .env.*.local
+Comandos-Android.txt
 
 .vscode/*
 !.vscode/extensions.json

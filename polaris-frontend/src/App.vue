@@ -359,10 +359,11 @@ onMounted(() => {
   gap: 15px;
   font-weight: 700;
   color: #999;
+  // padding-bottom: 10%;
   cursor: default;
 
   .divider {
-    color: #ddd;
+    color: #000000;
     font-weight: normal;
   }
 
@@ -370,15 +371,17 @@ onMounted(() => {
     cursor: pointer;
     transition: color 0.2s;
     font-size: 0.9rem;
+    padding: 4px 8px;
 
     &:hover {
-      color: #666;
+      color: #3d3c3c;
     }
 
     &.active {
       color: var(--ion-color-primary);
       text-decoration: underline;
-      text-underline-offset: 4px;
+      text-underline-offset: 5px;
+      text-decoration-thickness: 5px;
     }
   }
 }

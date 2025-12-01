@@ -139,7 +139,7 @@
     </div>
 
     <div class="pagination-controls">
-      <span>Página {{ currentPage }} de {{ totalPages }}</span>
+      <span>{{ t("tasks.page") }} {{ currentPage }} {{ t("tasks.of") }} {{ totalPages }}</span>
       <div class="buttons">
         <ion-button
           size="small"

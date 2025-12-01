@@ -76,9 +76,8 @@
               <h2>{{ task.title }}</h2>
               <p>{{ translateStatus(task.status) }}</p>
             </ion-label>
-            <ion-badge :color="getStatusColor(task.status)" slot="end">
+            <ion-badge :class="getStatusClass(task.status)" slot="end">
               {{ translateStatus(task.status) }}
-                         
             </ion-badge>
           </ion-item>
         </ion-list>
@@ -212,8 +211,9 @@ const handleImageError = (e: Event) => {
 
 const goToDetails = (id: string) => router.push(`/tasks/details/${id}`);
 const translateStatus = (s: string) => t(`status.${s}`);
-const getStatusColor = (s: string) =>
-  s === "COMPLETED" ? "success" : s === "IN_PROGRESS" ? "primary" : "medium";
+
+const getStatusClass = (s: string) =>
+  s ? s.toLowerCase().replace("_", "-") : "";
 
 onMounted(() => loadProfile());
 </script>
@@ -344,13 +344,50 @@ onMounted(() => loadProfile());
     margin-bottom: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
     cursor: pointer;
+
+    ion-label {
+      p {
+        font-size: 0.8rem;
+      }
+    }
+
+    ion-badge {
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+
+      &.planned {
+        background: #8aadb1;
+        color: white;
+      }
+      &.in-progress {
+        background: #3498db;
+        color: white;
+      }
+      &.in-review {
+        background: #c76bfc;
+        color: white;
+      }
+      &.completed {
+        background: #2ecc71;
+        color: white;
+      }
+      &.blocked {
+        background: #ff8a1c;
+        color: white;
+      }
+      &.cancelled {
+        background: #313131;
+        color: white;
+      }
+    }
+
     h2 {
       font-weight: 600;
       font-size: 1rem;
       color: #333;
-    }
-    p {
-      font-size: 0.8rem;
     }
   }
 }

@@ -39,6 +39,9 @@ const messages = {
       filter_all: "Todos",
       filter_me: "Atribuídas a mim",
 
+      page: "Página",
+      of: "de",
+
       create_page_title: "Nova Tarefa",
       edit_page_title: "Editar Tarefa",
       details_page_title: "Detalhes da Tarefa",
@@ -50,7 +53,6 @@ const messages = {
       field_desc_placeholder: "Detalhes da tarefa...",
       field_assignee: "Responsável",
       field_assignee_placeholder: "Selecione um usuário",
-
       btn_create: "CRIAR TAREFA",
       btn_save: "SALVAR ALTERAÇÕES",
       btn_cancel: "Cancelar",
@@ -68,8 +70,8 @@ const messages = {
       err_generic: "Erro ao carregar dados.",
 
       confirm_delete_title: "Confirmar Exclusão",
-      confirm_delete_msg:
-        "Tem certeza que deseja excluir",
+      confirm_delete_msg: "Tem certeza que deseja excluir",
+      status_updated: "Status atualizado com sucesso!",
     },
     status: {
       PLANNED: "Planejado",
@@ -118,6 +120,9 @@ const messages = {
       filter_all: "All",
       filter_me: "Assigned to me",
 
+      page: "Page",
+      of: "of",
+
       create_page_title: "New Task",
       edit_page_title: "Edit Task",
       details_page_title: "Task Details",
@@ -147,8 +152,8 @@ const messages = {
       err_generic: "Error loading data.",
 
       confirm_delete_title: "Confirm Delete",
-      confirm_delete_msg:
-        "Are you sure you want to permanently delete",
+      confirm_delete_msg: "Are you sure you want to permanently delete",
+      status_updated: "Status updated successfully!",
     },
     status: {
       PLANNED: "Planned",
