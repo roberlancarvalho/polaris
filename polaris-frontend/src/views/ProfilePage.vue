@@ -243,25 +243,28 @@ onMounted(() => loadProfile());
     font-size: 0.9rem;
   }
   .role-chip {
-    --background: rgba(255, 255, 255, 0.2);
-    --color: white;
+    background:  rgba(255, 255, 255, 0.2);
+    color: white;
     font-weight: 600;
+    text-transform: uppercase;
   }
 }
 
 .avatar-wrapper {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   margin: 0 auto;
+  cursor: pointer;
 
   .avatar-img {
-    width: 100%;
-    height: 100%;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     object-fit: cover;
     border: 4px solid rgba(255, 255, 255, 0.3);
     background: white;
+    cursor: pointer;
   }
 
   .camera-btn {

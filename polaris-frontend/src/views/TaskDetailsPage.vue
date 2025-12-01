@@ -366,16 +366,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 @use "@/theme/_mixins.scss" as *;
 
-ion-header {
-  background: var(--ion-color-primary);
-  box-shadow: none;
-  padding-top: var(--ion-safe-area-top, 45px);
-}
-ion-toolbar {
-  --background: transparent;
-  --padding-top: 0;
-  --min-height: 56px;
-}
+
 
 .content-bg {
   --background: #f4f5f8;
