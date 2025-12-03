@@ -55,7 +55,7 @@ O **Polaris** é uma solução arquitetural robusta desenvolvida para demonstrar
 * Docker & Docker Compose instalados.
 
 ### Modo Produção
-Execute a aplicação completa (Banco + API) com um único comando na raiz:
+Execute a aplicação completa (Banco + API Redis + RabbitMQ + S3) com um único comando na raiz:
 
 ```bash
 docker-compose up --build -d
